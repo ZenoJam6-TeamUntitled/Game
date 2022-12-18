@@ -362,6 +362,7 @@
 "Assets/Scripts/Controller Scripts/Player Scripts/PlayerController.cs"
 "Assets/Scripts/Controller Scripts/Player Scripts/PlayerInput.cs"
 "Assets/Scripts/Controller Scripts/Player Scripts/PlayerOrientation.cs"
+"Assets/Scripts/View Scripts/Cam Scripts/Cam Player.cs"
 -langversion:9.0
 
 /deterministic

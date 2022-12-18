@@ -130,6 +130,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2163574539906929071, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
+      propertyPath: groundDrag
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2163574539906929071, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
+      propertyPath: movementSpeed
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3992815008905003432, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
       propertyPath: jumpCooldown
       value: 0.4
@@ -197,6 +205,14 @@ PrefabInstance:
     - target: {fileID: 6577392745529095522, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494309401023778698, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
+      propertyPath: m_Drag
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494309401023778698, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
+      propertyPath: m_Mass
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2640193645488865575, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}

@@ -5,47 +5,60 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    public PlayerInput playerInput;
+    PlayerInput playerInput;
     Rigidbody rb;
 
-    [SerializeField]
+    Vector3 vertVelocity = Vector3.down;
+
+    [Header("Movement")]
     public float jumpHeight;
     public float movementSpeed;
-    bool canJump;
-
     public float jumpCooldown;
+    public float groundDrag;
 
-
-    public float playerHeight;
-    public LayerMask isOnGround;
-
-    bool grounded;
+    
+    public float grav;
+    bool canJump = true;
+    
     bool isGrounded;
 
-    void Awake()
+    private void Awake()
     {
         playerInput = new PlayerInput();
         rb = GetComponent<Rigidbody>();
 
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, isOnGround);
-        
         playerInput.Player.Jump.performed += ctx => Jump();
+        playerInput.Player.Crouch.performed += ctx => Crouch();
+        playerInput.Player.Run.performed += ctx => Run();
     }
 
-    void FixedUpdate()
-    {
-        Move();
-    }
 
-    void Jump()
+    private void update()
     {
-
-        if(canJump && grounded)
+        if(isGrounded)
         {
-
-            rb.velocity = Vector3.up * jumpHeight;
+            rb.drag = groundDrag;
+        }
+        else{
+            rb.drag = 0;
+        }             
+    }
+    private void FixedUpdate()
+    {
+        
+        Move();
        
-            print("FUCKING JUMP");
+    }
+
+    private void Jump()
+    {
+
+        if (canJump && isGrounded)
+        {
+            // Calculate the upward jump force based on the jump height
+            rb.velocity = new Vector3(rb.velocity.x,0f,rb.velocity.z);
+
+            rb.AddForce(transform.up * jumpHeight, ForceMode.Impulse);
 
             canJump = false;
 
@@ -58,28 +71,63 @@ public class PlayerController : MonoBehaviour
         canJump = true;
     }
 
-    void Move()
+    private void Move()
     {
-        
-        if (playerInput.Player.Movement.ReadValue<float>() > 0.01f)
+
+        // Get the horizontal input value
+        float horizontalInput = playerInput.Player.Movement.ReadValue<float>();
+
+        // Only apply horizontal movement if the input value is greater than a small threshold
+        if (Mathf.Abs(horizontalInput) > 0.01f)
         {
-            print("We just moved right");
-            rb.velocity = Vector3.right * movementSpeed;
+            // Calculate the horizontal force to apply based on the movement speed and input value
+            Vector3 horizontalForce = Vector3.right * horizontalInput * movementSpeed;
+
+            // Apply the horizontal force to the player character
+            rb.AddForce(horizontalForce, ForceMode.VelocityChange);
+            rb.drag = Mathf.Clamp(5.0f - Mathf.Abs(horizontalInput), 0.0f, 5.0f);
         }
-        else if (playerInput.Player.Movement.ReadValue<float>() < -0.01f)
+        else
         {
-            print("We just moved left");
-            rb.velocity = Vector3.left * movementSpeed;
+            // If there is no horizontal input, set the drag value to a larger value to slow down the player
+            rb.drag = 3.0f;
         }
+    }
+
+    private void Crouch()
+    {
+        movementSpeed /= 2f;
 
     }
 
-    void OnEnable()
+    private void Run()
+    {
+        movementSpeed *= 2f;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Platform")
+        {
+            isGrounded = true;
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.tag == "Platform")
+        {
+            isGrounded = false;
+        }
+    }
+
+    
+    private void OnEnable()
     {
         playerInput.Enable();
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         playerInput.Disable();
     }
