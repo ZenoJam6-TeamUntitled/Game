@@ -359,9 +359,10 @@
 -r:"Library/Bee/artifacts/1900b0aE.dag/Unity.VSCode.Editor.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEditor.UI.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEngine.UI.ref.dll"
-"Assets/Scripts/Controller Scripts/PlayerController.cs"
-"Assets/Scripts/Controller Scripts/PlayerInput.cs"
-"Assets/Scripts/Controller Scripts/PlayerOrientation.cs"
+"Assets/Scripts/Controller Scripts/Player Scripts/PlayerController.cs"
+"Assets/Scripts/Controller Scripts/Player Scripts/PlayerInput.cs"
+"Assets/Scripts/Controller Scripts/Player Scripts/PlayerOrientation.cs"
+"Assets/Scripts/View Scripts/Cam Scripts/Cam Player.cs"
 -langversion:9.0
 
 /deterministic
