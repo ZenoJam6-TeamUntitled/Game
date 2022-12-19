@@ -6,21 +6,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour  
 {
 
-    // Other member variables and event handlers omitted for brevity
 
-    // Enumeration of possible player states
-    private enum PlayerState
-    {
-        Idle,
-        Walking,
-        Running,
-        Jumping,
-        Crouching,
-        WallSliding
-    }
-
-    // Current player state
-    private PlayerState playerState;
     PlayerInput playerInput;
     Rigidbody rb;
 
@@ -29,12 +15,8 @@ public class PlayerController : MonoBehaviour
     public float movementSpeed;
     public float jumpCooldown;
     public float staminaCooldown;
-    public float groundDrag;
     public float momentum;
-   
-    [SerializeField] private float stuckTimer = 0f;
     
-    public float grav;
     bool canJump = true;
     bool canRun = true;
     bool canCrouch = true;
@@ -51,85 +33,23 @@ public class PlayerController : MonoBehaviour
         playerInput.Player.Jump.performed += ctx => Jump();
         playerInput.Player.Crouch.performed += ctx => Crouch();
         playerInput.Player.Run.performed += ctx => Run();
-        //rb.mass = 2;
-        //playerInput.Player.Run.performed += ctx => Slide();
+
     }
 
-
+    private void update()
+    {
+        
+    }
     private void FixedUpdate()
     {
-        // Update the player state based on the current input and conditions
-        UpdatePlayerState();
-        Debug.Log(playerState);
-        // Perform actions based on the current player state
-        switch (playerState)
-        {
-            case PlayerState.Idle:
-                // Perform idle behavior
-                break;
-            case PlayerState.Walking:
-                // Perform walking behavior
-                Move();
-                break;
-            case PlayerState.Running:
-                // Perform running behavior
-                Move();
-                break;
-            case PlayerState.Jumping:
-                // Perform jumping behavior
-                Jump();
-                break;
-            case PlayerState.Crouching:
-                // Perform crouching behavior
-                Crouch();
-                break;
-            case PlayerState.WallSliding:
-                // Perform wall sliding behavior
-                //WallSlide();
-                break;
-        }
-       
+       isGrounded = CheckTopCollision();
+       isCollidingWithWall = CheckWallCollision();
+       Move();
     }
     
     #region Player Movement
 
-        private void UpdatePlayerState()
-        {
-            // Get the horizontal input value
-            float horizontalInput = playerInput.Player.Movement.ReadValue<float>();
-
-            // Check if the player is colliding with a wall using raycasting
-            isCollidingWithWall = CheckWallCollision();
-
-            // Update the player state based on the current input and conditions
-            if (isGrounded)
-            {
-                if (Mathf.Abs(horizontalInput) > 0.01f)
-                {
-                    if (playerInput.Player.Run.ReadValue<float>() > 0.5f && canRun)
-                    {
-                        playerState = PlayerState.Running;
-                    }
-                    else
-                    {
-                        playerState = PlayerState.Walking;
-                    }
-                }
-                else
-                {
-                    playerState = PlayerState.Idle;
-                }
-            }
-            else if (isCollidingWithWall)
-            {
-                playerState = PlayerState.WallSliding;
-            }
-            else
-            {
-                playerState = PlayerState.Jumping;
-            }
-        }
-
+        
         private void Move()
         {
             
@@ -177,47 +97,40 @@ public class PlayerController : MonoBehaviour
             {
                 movementSpeed *= 1.5f;
                 canRun = false;
-                Invoke(nameof(ResetRun), staminaCooldown);
+                Invoke(nameof(Reset), staminaCooldown);
             }
         }
 
-
-        private void ResetRun()
-        {
-            movementSpeed = 8;
-            canRun = true;
-            staminaCooldown = 5;
-        }
 
         private void Jump()
         {
     
             
-            if (canJump)
+            if (canJump && isGrounded)
             {
                 // Calculate the upward jump force based on the jump height
                 rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
                 
                 canJump = false;
 
-                Invoke(nameof(ResetJump), jumpCooldown);
+                Invoke(nameof(Reset), jumpCooldown);
             }
-            else if(canJump && isCollidingWithWall)
-            {
-                rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
-                
-                canJump = false;
-
-                Invoke(nameof(ResetJump), jumpCooldown);
-            }
+            
         }
 
-        private void ResetJump()
+        private void Reset()
         {
-            canJump = true;
+            if(!canJump)
+            {
+                canJump = true;
+            }
+            else if(!canRun)
+            {
+                movementSpeed = 8;
+                canRun = true;
+                staminaCooldown = 5;
+            }
         }
-
-        
 
     #endregion
 
@@ -227,19 +140,20 @@ public class PlayerController : MonoBehaviour
         {
             // Set the origin of the ray to the top of the player character's collider
             Vector3 rayOrigin = transform.position + Vector3.up * GetComponent<Collider>().bounds.extents.y;
+            
 
             // Set the direction of the ray to be downward
-            Vector3 rayDirection = Vector3.down;
+            Vector3 rayDirectionDOWN = Vector3.down;
 
             // Set the length of the ray to be slightly longer than the height of the player character's collider
             float rayLength = GetComponent<Collider>().bounds.extents.y + 1f;
 
             // Draw the ray in the Scene view for debugging purposes
-            Debug.DrawRay(rayOrigin, rayDirection * rayLength, Color.yellow);
+
 
             // Perform the raycast and store the result in a RaycastHit variable
             RaycastHit hit;
-            if (Physics.Raycast(rayOrigin, rayDirection, out hit, rayLength) && hit.collider.gameObject.tag == "Platform")
+            if (Physics.Raycast(rayOrigin, rayDirectionDOWN, out hit, rayLength) && hit.collider.gameObject.tag == "Platform")
             {
                 return true;
             }
