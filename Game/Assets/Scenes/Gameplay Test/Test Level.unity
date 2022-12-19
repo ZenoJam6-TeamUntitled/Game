@@ -130,13 +130,37 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1628111541968230930, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 2163574539906929071, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
+      propertyPath: grav
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2163574539906929071, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
+      propertyPath: cooldown
+      value: 0.4
+      objectReference: {fileID: 0}
     - target: {fileID: 2163574539906929071, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
       propertyPath: groundDrag
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2163574539906929071, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
+      propertyPath: jumpHeight
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 2163574539906929071, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
+      propertyPath: stuckTimer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2163574539906929071, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
       propertyPath: movementSpeed
-      value: 0.5
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2163574539906929071, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
+      propertyPath: staminaCooldown
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3992815008905003432, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
       propertyPath: jumpCooldown
@@ -172,7 +196,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6577392745529095522, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 6577392745529095522, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
       propertyPath: m_LocalPosition.z
@@ -213,6 +237,10 @@ PrefabInstance:
     - target: {fileID: 7494309401023778698, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
       propertyPath: m_Mass
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494309401023778698, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
+      propertyPath: m_Constraints
+      value: 104
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2640193645488865575, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
@@ -407,6 +435,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 36688492520330665, guid: faa85152612e40144a8b7dc6ea9a8b15, type: 3}
+      propertyPath: m_TagString
+      value: Platform
+      objectReference: {fileID: 0}
     - target: {fileID: 131680233378452699, guid: faa85152612e40144a8b7dc6ea9a8b15, type: 3}
       propertyPath: m_Name
       value: Floor
@@ -430,6 +462,10 @@ PrefabInstance:
     - target: {fileID: 3898630925630847497, guid: faa85152612e40144a8b7dc6ea9a8b15, type: 3}
       propertyPath: m_Layer
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4190490281245839595, guid: faa85152612e40144a8b7dc6ea9a8b15, type: 3}
+      propertyPath: m_TagString
+      value: Hoppable
       objectReference: {fileID: 0}
     - target: {fileID: 8818794159784982939, guid: faa85152612e40144a8b7dc6ea9a8b15, type: 3}
       propertyPath: m_RootOrder

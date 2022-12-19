@@ -14,13 +14,21 @@ public class PlayerController : MonoBehaviour
     public float jumpHeight;
     public float movementSpeed;
     public float jumpCooldown;
+    public float staminaCooldown;
     public float groundDrag;
 
+
+   
+    [SerializeField] private float stuckTimer = 0f;
     
     public float grav;
     bool canJump = true;
+    bool canRun = true;
+    bool canCrouch = true;
     
-    bool isGrounded;
+    [SerializeField] bool isGrounded;
+
+    [SerializeField] bool isCollidingWithWall;
 
     private void Awake()
     {
@@ -30,97 +38,195 @@ public class PlayerController : MonoBehaviour
         playerInput.Player.Jump.performed += ctx => Jump();
         playerInput.Player.Crouch.performed += ctx => Crouch();
         playerInput.Player.Run.performed += ctx => Run();
+        playerInput.Player.Run.performed += ctx => Slide();
     }
 
 
     private void update()
     {
-        if(isGrounded)
+        if(isCollidingWithWall)
         {
-            rb.drag = groundDrag;
-        }
-        else{
-            rb.drag = 0;
-        }             
+            stamina();
+        }        
+
+        rb.AddForce(Vector3.down * grav, ForceMode.Force); 
     }
     private void FixedUpdate()
     {
-        
+        isGrounded = CheckTopCollision();
+        // Check if the player character is colliding with a wall using raycasting
+        isCollidingWithWall = CheckWallCollision();
         Move();
        
     }
+    
+    #region Player Movement
 
-    private void Jump()
-    {
-
-        if (canJump && isGrounded)
+        private void Move()
         {
-            // Calculate the upward jump force based on the jump height
-            rb.velocity = new Vector3(rb.velocity.x,0f,rb.velocity.z);
+            // Get the horizontal input value
+            float horizontalInput = playerInput.Player.Movement.ReadValue<float>();
 
-            rb.AddForce(transform.up * jumpHeight, ForceMode.Impulse);
+            // Only apply horizontal movement if the input value is greater than a small threshold
+            if (Mathf.Abs(horizontalInput) > 0.01f)
+            {
+                // Calculate the horizontal velocity to set based on the movement speed and input value
+                Vector3 horizontalVelocity = Vector3.right * horizontalInput * movementSpeed;
 
-            canJump = false;
+                // Set the player's horizontal velocity
+                rb.velocity = new Vector3(horizontalVelocity.x, rb.velocity.y, rb.velocity.z);
 
-            Invoke(nameof(ResetJump), jumpCooldown);
+                // Change the player's orientation based on the horizontal input
+                if (isGrounded)
+                {
+                    transform.rotation = Quaternion.Euler(0, horizontalInput < 0 ? 180 : 0, 0);
+                }
+                else
+                {
+                    Quaternion startRotation = transform.rotation;
+                    Quaternion endRotation = Quaternion.Euler(0, horizontalInput < 0 ? 180 : 0, 0);
+                }
+            }
+            else
+            {
+                // If there is no horizontal input, set the horizontal velocity to 0
+                rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
+            }
         }
-    }
-
-    private void ResetJump()
-    {
-        canJump = true;
-    }
-
-    private void Move()
-    {
-
-        // Get the horizontal input value
-        float horizontalInput = playerInput.Player.Movement.ReadValue<float>();
-
-        // Only apply horizontal movement if the input value is greater than a small threshold
-        if (Mathf.Abs(horizontalInput) > 0.01f)
+        private void Crouch()
         {
-            // Calculate the horizontal force to apply based on the movement speed and input value
-            Vector3 horizontalForce = Vector3.right * horizontalInput * movementSpeed;
-
-            // Apply the horizontal force to the player character
-            rb.AddForce(horizontalForce, ForceMode.VelocityChange);
-            rb.drag = Mathf.Clamp(5.0f - Mathf.Abs(horizontalInput), 0.0f, 5.0f);
+            movementSpeed = canCrouch && canRun ? movementSpeed / 2 : 8;
+            canCrouch = !canCrouch;
         }
-        else
+
+        private void Run()
         {
-            // If there is no horizontal input, set the drag value to a larger value to slow down the player
-            rb.drag = 3.0f;
+            if (canRun && isGrounded)
+            {
+                movementSpeed *= 1.5f;
+                canRun = false;
+                Invoke(nameof(ResetRun), staminaCooldown);
+            }
         }
-    }
 
-    private void Crouch()
-    {
-        movementSpeed /= 2f;
-
-    }
-
-    private void Run()
-    {
-        movementSpeed *= 2f;
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.tag == "Platform")
+        private void Slide()
         {
-            isGrounded = true;
+            if (!canRun && isGrounded && canCrouch)
+            {
+                movementSpeed += 2f;
+                canRun = false;
+                staminaCooldown = 3;
+                Invoke(nameof(ResetRun), staminaCooldown);
+            }
         }
-    }
 
-    private void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.tag == "Platform")
+
+        private void ResetRun()
         {
-            isGrounded = false;
+            movementSpeed = 8;
+            canRun = true;
+            staminaCooldown = 5;
         }
-    }
 
+        private void Jump()
+        {
+    
+            rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+            
+            if (canJump && isGrounded)
+            {
+                // Calculate the upward jump force based on the jump height
+                rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
+                
+                canJump = false;
+
+                Invoke(nameof(ResetJump), jumpCooldown);
+            }
+            else if(canJump && isCollidingWithWall)
+            {
+                rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
+                
+                canJump = false;
+
+                Invoke(nameof(ResetJump), jumpCooldown);
+            }
+        }
+
+        private void ResetJump()
+        {
+            canJump = true;
+        }
+
+        private void stamina()
+        {
+                
+                if (stuckTimer > 0)
+                    {
+                        stuckTimer -= Time.deltaTime;
+
+                        // Gradually reduce the player's velocity over time
+                        rb.velocity = rb.velocity * 1f;
+                    }
+                    if (stuckTimer == 0)
+                    {
+                        // Reset the player's velocity when the timer expires
+                        rb.velocity = Vector3.zero;
+                        stuckTimer = staminaCooldown;
+                    }
+        }
+
+        
+
+    #endregion
+
+
+    #region Collision Detection
+        private bool CheckTopCollision()
+        {
+            // Set the origin of the ray to the top of the player character's collider
+            Vector3 rayOrigin = transform.position + Vector3.up * GetComponent<Collider>().bounds.extents.y;
+
+            // Set the direction of the ray to be downward
+            Vector3 rayDirection = Vector3.down;
+
+            // Set the length of the ray to be slightly longer than the height of the player character's collider
+            float rayLength = GetComponent<Collider>().bounds.extents.y + 1f;
+
+            // Draw the ray in the Scene view for debugging purposes
+            Debug.DrawRay(rayOrigin, rayDirection * rayLength, Color.yellow);
+
+            // Perform the raycast and store the result in a RaycastHit variable
+            RaycastHit hit;
+            if (Physics.Raycast(rayOrigin, rayDirection, out hit, rayLength) && hit.collider.gameObject.tag == "Platform")
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool CheckWallCollision()
+        {
+            // Set the origin of the ray to the center of the player character's collider
+            Vector3 rayOrigin = transform.position;
+
+            // Set the direction of the ray to be forward
+            Vector3 rayDirection = new Vector3(transform.forward.x, transform.forward.y, 0);
+
+            // Set the length of the ray to be slightly longer than the width of the player character's collider
+            float rayLength = GetComponent<Collider>().bounds.extents.x + 1f;
+
+            // Draw the ray in the Scene view for debugging purposes
+            Debug.DrawRay(rayOrigin, rayDirection * rayLength, Color.red);
+
+            // Perform the raycast and store the result in a RaycastHit variable
+            RaycastHit hit;
+            if (Physics.Raycast(rayOrigin, rayDirection, out hit, rayLength) && hit.collider.gameObject.tag == "Hoppable")
+            {
+                return true;
+            }
+            return false;
+        }
+    #endregion
     
     private void OnEnable()
     {

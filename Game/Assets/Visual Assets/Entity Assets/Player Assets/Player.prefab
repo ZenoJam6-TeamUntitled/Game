@@ -147,13 +147,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b515739db3151774a98baabc6f41d482, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isOnGround:
-    serializedVersion: 2
-    m_Bits: 64
   jumpHeight: 7
   movementSpeed: 6
   jumpCooldown: 0.4
+  staminaCooldown: 0
   groundDrag: 2
+  grav: 0
 --- !u!136 &8787633868896879337
 CapsuleCollider:
   m_ObjectHideFlags: 0
