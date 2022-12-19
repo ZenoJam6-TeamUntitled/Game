@@ -143,6 +143,10 @@ PrefabInstance:
       value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 2163574539906929071, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
+      propertyPath: momentum
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2163574539906929071, guid: 5f695fd05d8f1e048932f57ca06fa804, type: 3}
       propertyPath: groundDrag
       value: 5
       objectReference: {fileID: 0}

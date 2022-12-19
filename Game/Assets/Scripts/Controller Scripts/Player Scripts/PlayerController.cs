@@ -3,12 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour  
 {
+
+    // Other member variables and event handlers omitted for brevity
+
+    // Enumeration of possible player states
+    private enum PlayerState
+    {
+        Idle,
+        Walking,
+        Running,
+        Jumping,
+        Crouching,
+        WallSliding
+    }
+
+    // Current player state
+    private PlayerState playerState;
     PlayerInput playerInput;
     Rigidbody rb;
-
-    Vector3 vertVelocity = Vector3.down;
 
     [Header("Movement")]
     public float jumpHeight;
@@ -16,8 +30,7 @@ public class PlayerController : MonoBehaviour
     public float jumpCooldown;
     public float staminaCooldown;
     public float groundDrag;
-
-
+    public float momentum;
    
     [SerializeField] private float stuckTimer = 0f;
     
@@ -38,40 +51,99 @@ public class PlayerController : MonoBehaviour
         playerInput.Player.Jump.performed += ctx => Jump();
         playerInput.Player.Crouch.performed += ctx => Crouch();
         playerInput.Player.Run.performed += ctx => Run();
-        playerInput.Player.Run.performed += ctx => Slide();
+        //rb.mass = 2;
+        //playerInput.Player.Run.performed += ctx => Slide();
     }
 
 
-    private void update()
-    {
-        if(isCollidingWithWall)
-        {
-            stamina();
-        }        
-
-        rb.AddForce(Vector3.down * grav, ForceMode.Force); 
-    }
     private void FixedUpdate()
     {
-        isGrounded = CheckTopCollision();
-        // Check if the player character is colliding with a wall using raycasting
-        isCollidingWithWall = CheckWallCollision();
-        Move();
+        // Update the player state based on the current input and conditions
+        UpdatePlayerState();
+        Debug.Log(playerState);
+        // Perform actions based on the current player state
+        switch (playerState)
+        {
+            case PlayerState.Idle:
+                // Perform idle behavior
+                break;
+            case PlayerState.Walking:
+                // Perform walking behavior
+                Move();
+                break;
+            case PlayerState.Running:
+                // Perform running behavior
+                Move();
+                break;
+            case PlayerState.Jumping:
+                // Perform jumping behavior
+                Jump();
+                break;
+            case PlayerState.Crouching:
+                // Perform crouching behavior
+                Crouch();
+                break;
+            case PlayerState.WallSliding:
+                // Perform wall sliding behavior
+                //WallSlide();
+                break;
+        }
        
     }
     
     #region Player Movement
 
-        private void Move()
+        private void UpdatePlayerState()
         {
             // Get the horizontal input value
             float horizontalInput = playerInput.Player.Movement.ReadValue<float>();
 
+            // Check if the player is colliding with a wall using raycasting
+            isCollidingWithWall = CheckWallCollision();
+
+            // Update the player state based on the current input and conditions
+            if (isGrounded)
+            {
+                if (Mathf.Abs(horizontalInput) > 0.01f)
+                {
+                    if (playerInput.Player.Run.ReadValue<float>() > 0.5f && canRun)
+                    {
+                        playerState = PlayerState.Running;
+                    }
+                    else
+                    {
+                        playerState = PlayerState.Walking;
+                    }
+                }
+                else
+                {
+                    playerState = PlayerState.Idle;
+                }
+            }
+            else if (isCollidingWithWall)
+            {
+                playerState = PlayerState.WallSliding;
+            }
+            else
+            {
+                playerState = PlayerState.Jumping;
+            }
+        }
+
+        private void Move()
+        {
+            
+            // Get the horizontal input value
+            float horizontalInput = playerInput.Player.Movement.ReadValue<float>();
+
+            // Calculate the current movement speed based on the input value and the player's momentum
+            float currentMovementSpeed = Mathf.Lerp(0, movementSpeed, Mathf.Abs(horizontalInput));
+
             // Only apply horizontal movement if the input value is greater than a small threshold
             if (Mathf.Abs(horizontalInput) > 0.01f)
             {
-                // Calculate the horizontal velocity to set based on the movement speed and input value
-                Vector3 horizontalVelocity = Vector3.right * horizontalInput * movementSpeed;
+                // Calculate the horizontal velocity to set based on the current movement speed and input value
+                Vector3 horizontalVelocity = Vector3.right * horizontalInput * currentMovementSpeed;
 
                 // Set the player's horizontal velocity
                 rb.velocity = new Vector3(horizontalVelocity.x, rb.velocity.y, rb.velocity.z);
@@ -89,8 +161,8 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                // If there is no horizontal input, set the horizontal velocity to 0
-                rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
+                // If there is no horizontal input, gradually reduce the player's horizontal velocity
+                rb.velocity = new Vector3(rb.velocity.x * momentum, rb.velocity.y, rb.velocity.z);
             }
         }
         private void Crouch()
@@ -109,17 +181,6 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        private void Slide()
-        {
-            if (!canRun && isGrounded && canCrouch)
-            {
-                movementSpeed += 2f;
-                canRun = false;
-                staminaCooldown = 3;
-                Invoke(nameof(ResetRun), staminaCooldown);
-            }
-        }
-
 
         private void ResetRun()
         {
@@ -131,9 +192,8 @@ public class PlayerController : MonoBehaviour
         private void Jump()
         {
     
-            rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
             
-            if (canJump && isGrounded)
+            if (canJump)
             {
                 // Calculate the upward jump force based on the jump height
                 rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
@@ -155,24 +215,6 @@ public class PlayerController : MonoBehaviour
         private void ResetJump()
         {
             canJump = true;
-        }
-
-        private void stamina()
-        {
-                
-                if (stuckTimer > 0)
-                    {
-                        stuckTimer -= Time.deltaTime;
-
-                        // Gradually reduce the player's velocity over time
-                        rb.velocity = rb.velocity * 1f;
-                    }
-                    if (stuckTimer == 0)
-                    {
-                        // Reset the player's velocity when the timer expires
-                        rb.velocity = Vector3.zero;
-                        stuckTimer = staminaCooldown;
-                    }
         }
 
         
