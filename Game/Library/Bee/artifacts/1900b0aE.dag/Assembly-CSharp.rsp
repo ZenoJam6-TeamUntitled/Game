@@ -361,7 +361,7 @@
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEngine.UI.ref.dll"
 "Assets/Scripts/Controller Scripts/PlayerController.cs"
 "Assets/Scripts/Controller Scripts/PlayerInput.cs"
-"Assets/Scripts/Controller Scripts/PlayerOrientation.cs"
+"Assets/Scripts/View Scripts/Camera Scripts/CameraFollow.cs"
 -langversion:9.0
 
 /deterministic
