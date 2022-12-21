@@ -6,15 +6,26 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour  
 {   
+
+    public enum PlayerStates{
+        idle,
+        running,
+        walking,
+        crouching,
+        jumping,
+        grappling
+    }
+
+    public PlayerStates playerState;
     // The character joint that will connect the player to the grapple point
     public PlayerInput playerInput;
     public Rigidbody rb;
-    private LineRenderer lineRend;
-    private SpringJoint springJnt;
+    public LineRenderer lineRenderer;
 
     #region Movement
 
     [Header("Movement")]
+    public float horizontalInput;
     public float jumpHeight;
     public float movementSpeed;
     public float jumpCooldown;
@@ -27,58 +38,150 @@ public class PlayerController : MonoBehaviour
     public bool canJump = true;
     public bool canRun = true;
     public bool canCrouch = true;
+
+    public float isJumping;
+    public float isCrouching;
+    public float isRunning;
+    public float isIdle;
+    public float isWalking;
     public bool isGrounded;
     public bool isCollidingWithWall;
-    public bool movingClockwise;
-    public bool isGrappling;
+    public float isGrappling;
     #endregion
     
-    public float moveSpeed;
-    public float leftAngle;
-    public float rightAngle;
+    public float swingForce = 5;
+    public Transform grapplePoint;
     
-    public void Start()
-    {
-        
-        
-        movingClockwise = true;
-    }
+ 
     public void Awake()
     {
         playerInput = new PlayerInput();
         rb = GetComponent<Rigidbody>(); 
-        lineRend = GetComponent<LineRenderer>();
-        springJnt = GetComponent<SpringJoint>();
-
-        playerInput.Player.Run.performed += ctx => Run();
-        playerInput.Player.Jump.performed += ctx => Jump();
-        playerInput.Player.Crouch.performed += ctx => Crouch();
-        playerInput.Player.Grapple.performed += ctx => Grapple();
-
-        lineRend.enabled = false;
-        springJnt.enableCollision = false;
+        // lineRend = GetComponent<LineRenderer>();
+        // springJnt = GetComponent<SpringJoint>();
+        playerInput.Player.Enable();
+        // lineRend.enabled = false;
+        // springJnt.enableCollision = false;
     }
 
     public void Update()
     {
-        if(isGrappling)
-        {
-            Swing();
-        }
+        horizontalInput = playerInput.Player.Move.ReadValue<float>();
+        isJumping = playerInput.Player.Jump.ReadValue<float>();
+        isRunning = playerInput.Player.Run.ReadValue<float>();
+        isCrouching = playerInput.Player.Crouch.ReadValue<float>();
+        isGrappling = playerInput.Player.Grapple.ReadValue<float>();
+        
     }
 
     public void FixedUpdate()
     {
         isGrounded = CheckTopCollision();
         isCollidingWithWall = CheckWallCollision();
-        Move();
+        UpdatePlayerState();
+        switch (playerState)
+        {
+            case PlayerStates.idle:
+                // Perform idle behavior
+                
+                break;
+            case PlayerStates.walking:
+                // Perform walking behavior
+                
+                Move();
+                break;
+            case PlayerStates.running:
+                // Perform running behavior
+                Run();
+                break;
+            case PlayerStates.jumping:
+                // Perform jumping behavior
+                
+                Jump();
+                break;
+            case PlayerStates.crouching:
+                // Perform crouching behavior
+                
+                Crouch();
+                break;
+            case PlayerStates.grappling:
+                GrappleToPoint();
+                lineRenderer.enabled = true;
+                break;
+        }
     }
+
+
+    public void UpdatePlayerState()
+    {
+        if(isGrounded)
+        {
+            lineRenderer.enabled = false;
+            if (Mathf.Abs(horizontalInput) > 0.01f)
+            {
+                    if (Mathf.Abs(isRunning)> 0.5f && playerState == PlayerStates.walking)
+                    {
+                        playerState = PlayerStates.running;
+                    }
+                    else if(Mathf.Abs(isJumping) > 0.5f)
+                    {
+                        playerState = PlayerStates.jumping;
+                    }
+                    else if(Mathf.Abs(isCrouching) > 0.5f && playerState == PlayerStates.walking)
+                    {
+                        playerState = PlayerStates.crouching;
+                    }
+                    else
+                    {
+                        playerState = PlayerStates.walking;
+                    }
+            }
+            else if(Mathf.Abs(isJumping) > 0.5f)
+            {
+                playerState = PlayerStates.jumping;
+            }
+            else if(Mathf.Abs(isCrouching) > 0.5f) 
+            {
+                playerState = PlayerStates.crouching;
+            }
+            else
+            {
+                playerState = PlayerStates.idle;
+            }
+        }
+        else if(!isGrounded)
+        {
+            lineRenderer.enabled = false;
+            if (Mathf.Abs(horizontalInput) > 0.01f)
+            {
+                if (Mathf.Abs(isRunning)> 0.5f)
+                {
+                    playerState = PlayerStates.running;
+                }
+                else
+                {
+                    playerState = PlayerStates.walking;
+                }
+            }
+            else if ((Vector3.Distance(transform.position, grapplePoint.position) < 15f && 
+            Mathf.Abs(isGrappling) > 0.5f) || (Vector3.Distance(transform.position, grapplePoint.position) < 15f && 
+            Mathf.Abs(isGrappling) > 0.5f && Mathf.Abs(horizontalInput) > 0.01f))
+            {
+                playerState = PlayerStates.grappling;
+            }
+            else
+            {
+                playerState = PlayerStates.idle;
+            }
+        }
+        
+    }
+
 
     #region Player Movement        
         public void Move()
         {
             // Get the horizontal input value
-            float horizontalInput = playerInput.Player.Move.ReadValue<float>();
 
             // Calculate the current movement speed based on the input value and the player's momentum
             float currentMovementSpeed = Mathf.Lerp(0, movementSpeed, Mathf.Abs(horizontalInput));
@@ -113,35 +216,40 @@ public class PlayerController : MonoBehaviour
     #region Player Actions
         public void Crouch()
         {
-            movementSpeed = canCrouch ? movementSpeed / 2 : 8;
-            canCrouch = !canCrouch;
+            // If the character is currently crouched, uncrouch them by setting their movement speed to the normal value
+            if (canCrouch)
+            {
+                movementSpeed = 8;
+                canCrouch = false;
+            }
+            // If the character is not currently crouched, crouch them by setting their movement speed to half the normal value
+            else
+            {
+                movementSpeed /= 2;
+                canCrouch = true;
+            }
         }
 
         public void Run()
         {
-            if(canRun && canCrouch)
+            if(canCrouch && canRun)
+            {
                 movementSpeed *= 1.5f;
                 canRun = false;
                 Invoke(nameof(Reset), staminaCooldown);
+            }
         }
 
 
         public void Jump()
         {
-            if(canJump && isGrounded)
+            if(isGrounded && canJump)
                 // Calculate the upward jump force based on the jump height
                 rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
                 canJump = false;
                 Invoke(nameof(Reset), jumpCooldown); 
         }
 
-        public void Grapple()
-        {
-            if(isGrappling)
-            {
-                // SelectNode();
-            }
-        }
 
     
     public void Reset()
@@ -154,7 +262,6 @@ public class PlayerController : MonoBehaviour
             {
                 movementSpeed = 8;
                 canRun = true;
-                staminaCooldown = 5;
             }
         }
 
@@ -212,38 +319,21 @@ public class PlayerController : MonoBehaviour
     #endregion
 
 
-    #region Grapple Angle
-    // private void SelectNode(Node node)
-    // {
-    //     selectedNode = node;
-    // }
+    #region Grapple 
 
-    public void ChangeMoveDir()
-    {
-        if (transform.rotation.z > rightAngle)
+        private void GrappleToPoint()
         {
-            movingClockwise = false;
+            // Calculate the direction from the player to the grapple point
+            Vector3 grappleDirection = grapplePoint.position - transform.position;
+            // Normalize the direction so that it has a length of 1
+            grappleDirection.Normalize();
+            // Apply the swing force to the player's rigidbody in the direction of the grapple point
+           
+            rb.AddForce(grappleDirection * swingForce, ForceMode.Impulse);
+            lineRenderer.SetPosition(0, transform.position);
+            lineRenderer.SetPosition(1, grapplePoint.position);
+            
         }
-        if (transform.rotation.z < leftAngle)
-        {
-            movingClockwise = true;
-        }
-    }
-
-    public void Swing()
-    {
-        ChangeMoveDir();
-
-        if (movingClockwise)
-        {
-            rb.angularVelocity = Vector3.forward * moveSpeed;
-        }
-
-        if (!movingClockwise)
-        {
-            rb.angularVelocity = Vector3.forward * moveSpeed * -1;
-        }
-    }
     #endregion
     public void OnEnable()
     {
