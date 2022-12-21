@@ -47,7 +47,6 @@ GameObject:
   - component: {fileID: 7337751459681282766}
   - component: {fileID: 1527298443751597840}
   - component: {fileID: 1333584487696940272}
-  - component: {fileID: 8649015379408396744}
   m_Layer: 0
   m_Name: PlayerBody
   m_TagString: Untagged
@@ -192,7 +191,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ef261eef85f7ec4caf8ead880bcfd0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerState: 0
   rb: {fileID: 0}
+  horizontalInput: 0
   jumpHeight: 150
   movementSpeed: 7
   jumpCooldown: 0.4
@@ -201,6 +202,11 @@ MonoBehaviour:
   canJump: 1
   canRun: 1
   canCrouch: 1
+  isJumping: 0
+  isCrouching: 0
+  isRunning: 0
+  isIdle: 0
+  isWalking: 0
   isGrounded: 0
   isCollidingWithWall: 0
   movingClockwise: 0
@@ -208,27 +214,3 @@ MonoBehaviour:
   moveSpeed: 0
   leftAngle: 0
   rightAngle: 0
---- !u!145 &8649015379408396744
-SpringJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5786738806643542965}
-  m_ConnectedBody: {fileID: 0}
-  m_ConnectedArticulationBody: {fileID: 0}
-  m_Anchor: {x: 0, y: 1, z: 0}
-  m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
-  serializedVersion: 2
-  m_Spring: 10
-  m_Damper: 0.2
-  m_MinDistance: 0
-  m_MaxDistance: 0
-  m_Tolerance: 0.025
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
