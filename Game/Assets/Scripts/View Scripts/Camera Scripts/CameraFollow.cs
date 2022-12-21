@@ -4,15 +4,14 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    public Transform target; // The object to follow
-    public float smoothTime = 0.3f; // The time it takes for the camera to catch up to the target
-    public Vector3 offset; // The distance between the camera and the target
+     public float FollowSpeed = 2f;
+    public float yOffset =1f;
+    public Transform target;
 
-    private Vector3 velocity = Vector3.zero; // The camera's current velocity
-
-    private void Update()
+    // Update is called once per frame
+    void Update()
     {
-        // Use the SmoothDamp function to smoothly transition the camera's position to the target's position
-        transform.position = Vector3.SmoothDamp(transform.position, target.position + offset, ref velocity, smoothTime);
+        Vector3 newPos = new Vector3(target.position.x,target.position.y + yOffset,-10f);
+        transform.position = Vector3.Slerp(transform.position,newPos,FollowSpeed*Time.deltaTime);
     }
 }
