@@ -4,7 +4,15 @@
 TagManager:
   serializedVersion: 2
   tags:
+<<<<<<< HEAD
   - Grapple Point
+=======
+  - Platform
+  - Wall
+  - Grapple Point
+  - GrappleAOE
+  - GrappleHook
+>>>>>>> origin/Icy
   layers:
   - Default
   - TransparentFX
