@@ -256,6 +256,7 @@ MonoBehaviour:
   playerState: 0
   rb: {fileID: 4747644829163784048}
   lineRenderer: {fileID: 2063654682890721977}
+  anim: {fileID: 0}
   horizontalInput: 0
   jumpHeight: 30
   movementSpeed: 7
@@ -472,6 +473,10 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: 5783ad478a9da9141ae9f02204cf2c98, type: 3}
       propertyPath: m_WarningMessage
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 5783ad478a9da9141ae9f02204cf2c98, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7644061755894544592, guid: 5783ad478a9da9141ae9f02204cf2c98, type: 3}
       propertyPath: m_Materials.Array.data[0]
