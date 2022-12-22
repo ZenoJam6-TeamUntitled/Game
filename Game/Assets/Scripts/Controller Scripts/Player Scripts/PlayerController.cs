@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     public PlayerInput playerInput;
     public Rigidbody rb;
     public LineRenderer lineRenderer;
+    public Animator anim;
 
     #region Movement
 
@@ -62,6 +63,7 @@ public class PlayerController : MonoBehaviour
         playerInput.Player.Enable();
         // lineRend.enabled = false;
         // springJnt.enableCollision = false;
+        anim = GetComponentInChildren<Animator>();
     }
 
     public void Update()
@@ -77,26 +79,33 @@ public class PlayerController : MonoBehaviour
     public void FixedUpdate()
     {
         isGrounded = CheckTopCollision();
+        anim.SetBool("Grounded", isGrounded);
         isCollidingWithWall = CheckWallCollision();
         UpdatePlayerState();
         switch (playerState)
         {
             case PlayerStates.idle:
-                // Perform idle behavior
-                
+                // Perform idle behavior              
+                    anim.SetBool("Walk", false);
+                    anim.SetBool("Run", false);
                 break;
             case PlayerStates.walking:
                 // Perform walking behavior
-                
+                if (isRunning < 0.5f) {
+                    anim.SetBool("Walk", true);
+                    anim.SetBool("Run", false);
+                }
                 Move();
                 break;
             case PlayerStates.running:
                 // Perform running behavior
+                anim.SetBool("Walk", false);
+                anim.SetBool("Run", true);
                 Run();
                 break;
             case PlayerStates.jumping:
                 // Perform jumping behavior
-                
+                anim.SetTrigger("Jump");
                 Jump();
                 break;
             case PlayerStates.crouching:
@@ -237,7 +246,7 @@ public class PlayerController : MonoBehaviour
                 movementSpeed *= 1.5f;
                 canRun = false;
                 Invoke(nameof(Reset), staminaCooldown);
-            }
+        }
         }
 
 
