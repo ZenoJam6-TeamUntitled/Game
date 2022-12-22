@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,6 +19,8 @@ public class PlayerController : MonoBehaviour
 
     public PlayerStates playerState;
     // The character joint that will connect the player to the grapple point
+    [SerializeField] public float grapplingDistance;
+    // Max distance for grappling
     public PlayerInput playerInput;
     public Rigidbody rb;
     public LineRenderer lineRenderer;
@@ -38,6 +41,7 @@ public class PlayerController : MonoBehaviour
     public bool canJump = true;
     public bool canRun = true;
     public bool canCrouch = true;
+    public bool canGrapple = false;
 
     public float isJumping;
     public float isCrouching;
@@ -323,17 +327,29 @@ public class PlayerController : MonoBehaviour
 
         private void GrappleToPoint()
         {
+            if (CheckPath())
+            {
             // Calculate the direction from the player to the grapple point
             Vector3 grappleDirection = grapplePoint.position - transform.position;
             // Normalize the direction so that it has a length of 1
             grappleDirection.Normalize();
             // Apply the swing force to the player's rigidbody in the direction of the grapple point
-           
+
             rb.AddForce(grappleDirection * swingForce, ForceMode.Impulse);
             lineRenderer.SetPosition(0, transform.position);
             lineRenderer.SetPosition(1, grapplePoint.position);
+            }
             
         }
+
+    private bool CheckPath()
+    {
+        if (Physics.Raycast(transform.position, grapplePoint.position, grapplingDistance))
+        {
+            return true;
+        }
+        else return false;        
+    }
     #endregion
     public void OnEnable()
     {
