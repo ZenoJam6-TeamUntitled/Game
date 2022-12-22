@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 9a03b2b7e25a5c140be4729e4a1e4c76, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.006912459, g: 0.008395733, b: 0.0103831785, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -443,22 +443,6 @@ PrefabInstance:
       propertyPath: grapplePoint
       value: 
       objectReference: {fileID: 400272293}
-    - target: {fileID: 2063654682890721977, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
-      propertyPath: m_Materials.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2063654682890721977, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
-      propertyPath: m_Parameters.textureMode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2063654682890721977, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: b712f29b69a1e25449610dba99cfe571, type: 2}
-    - target: {fileID: 2063654682890721977, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
-      propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[0].value
-      value: 0.16981283
-      objectReference: {fileID: 0}
     - target: {fileID: 2992953961138556094, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
       propertyPath: m_Name
       value: Player
