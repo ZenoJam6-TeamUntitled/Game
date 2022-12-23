@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GrappleNode : MonoBehaviour
 {
-    public ParticleSystem GP1PS;
+    public ParticleSystem GPPS;
     public float radius = 10f;
     public string playerTag = "Player";
     public bool nowEmitting = false; 
@@ -13,7 +13,7 @@ public class GrappleNode : MonoBehaviour
 
     private void Start()
     {
-         ParticleSystem.MainModule main = GP1PS.main;
+         ParticleSystem.MainModule main = GPPS.main;
          main.playOnAwake = false;
     }
 
@@ -25,11 +25,11 @@ public class GrappleNode : MonoBehaviour
         out hit, Mathf.Infinity);
         if (hitPlayer && hit.collider.tag == playerTag)
         {
-            GP1PS.Play();
+            GPPS.Play();
         }
         else
         {
-            GP1PS.Stop();
+            GPPS.Stop();
         }
     }
 }
