@@ -38,16 +38,14 @@ public class FileDataHandler
             {
                 Debug.LogError("Error occured when trying to load data from file" + fullPath + "\n" + e);
             }
-
-
         }
         return loadedData;
-
     }
 
     public void Save(GameData data)
     {
         string fullPath = Path.Combine(dataDirPath, dataFileName);
+        // Filesave path https://docs.unity3d.com/ScriptReference/Application-persistentDataPath.html
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
