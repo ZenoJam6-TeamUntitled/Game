@@ -13,13 +13,15 @@ public class PlayerController : MonoBehaviour
         walking,
         crouching,
         jumping,
-        grappling
+        grappling,
+        mantle
     }
 
     public PlayerStates playerState;
     // The character joint that will connect the player to the grapple point
     public PlayerInput playerInput;
     public Rigidbody rb;
+    public Transform height;
     public LineRenderer lineRenderer;
     public Animator anim;
 
@@ -39,18 +41,26 @@ public class PlayerController : MonoBehaviour
     public bool canJump = true;
     public bool canRun = true;
 
+    public bool canMantle;
     public float isJumping;
     public float isRunning;
     public float isIdle;
     public float isWalking;
+    public float isMantling;
     public bool isGrounded;
     public bool isCollidingWithWall;
     public float isGrappling;
+
     #endregion
     
+    #region Mantle
+    public float mantleHopForce;
+    public float mantleHopDuration;
+    public string mantleTag;
+    #endregion
+
     public float swingForce = 5;
     public List<Transform> grapplePoints = new List<Transform>();
-    
  
     public void Awake()
     {
@@ -66,12 +76,14 @@ public class PlayerController : MonoBehaviour
         isJumping = playerInput.Player.Jump.ReadValue<float>();
         isRunning = playerInput.Player.Run.ReadValue<float>();
         isGrappling = playerInput.Player.Grapple.ReadValue<float>();
+        isMantling = playerInput.Player.Mantle.ReadValue<float>();
         
         
     }
 
     public void FixedUpdate()
     {
+        canMantle = CheckMantleCollision();
         isGrounded = CheckTopCollision();
         anim.SetBool("Grounded", isGrounded);
         isCollidingWithWall = CheckWallCollision();
@@ -104,7 +116,9 @@ public class PlayerController : MonoBehaviour
                 break;
             case PlayerStates.grappling:
                 GrappleToPoint();
-                lineRenderer.enabled = true;
+                break;
+            case PlayerStates.mantle:
+                StartCoroutine(MantleHopCoroutine());
                 break;
         }
     }
@@ -168,7 +182,13 @@ public class PlayerController : MonoBehaviour
                 playerState = PlayerStates.idle;
             }
         }
-        
+        if(canMantle)
+        {
+            if (Mathf.Abs(isMantling) > 0.5f)
+            {
+                playerState = PlayerStates.mantle;
+            }
+        }
     }
 
 
@@ -202,7 +222,7 @@ public class PlayerController : MonoBehaviour
             else
             {
                 // If there is no horizontal input, gradually reduce the player's horizontal velocity
-                rb.velocity = new Vector3(rb.velocity.x * momentum, rb.velocity.y, rb.velocity.z);
+                rb.velocity = new Vector3(rb.velocity.x + momentum, rb.velocity.y, rb.velocity.z);
             }
         }
     #endregion
@@ -239,7 +259,7 @@ public class PlayerController : MonoBehaviour
             }
             else if(!canRun)
             {
-                movementSpeed = 8;
+                movementSpeed = 5.8f;
                 canRun = true;
             }
         }
@@ -262,7 +282,7 @@ public class PlayerController : MonoBehaviour
             float rayLength = GetComponent<Collider>().bounds.extents.y + 1f;
 
             // Draw the ray in the Scene view for debugging purposes
-            Debug.DrawRay(transform.position, rayDirectionDOWN * rayLength, Color.green, 1f);
+            //Debug.DrawRay(transform.position, rayDirectionDOWN * rayLength, Color.green, 1f);
 
             // Perform the raycast and store the result in a RaycastHit variable
             RaycastHit hit;
@@ -285,7 +305,7 @@ public class PlayerController : MonoBehaviour
             float rayLength = GetComponent<Collider>().bounds.extents.x + 1f;
 
             // Draw the ray in the Scene view for debugging purposes
-            Debug.DrawRay(rayOrigin, rayDirection * rayLength, Color.red, 1f);
+            //Debug.DrawRay(rayOrigin, rayDirection * rayLength, Color.red, 1f);
 
             // Perform the raycast and store the result in a RaycastHit variable
             RaycastHit hit;
@@ -298,25 +318,46 @@ public class PlayerController : MonoBehaviour
 
         public bool CheckMantleCollision()
         {
-            // Set the origin of the ray to the center of the player character's collider
-            Vector3 rayOrigin = transform.position;
-
-            // Set the direction of the ray to be forward
+            Vector3 velocity = GetComponent<Rigidbody>().velocity;
+            // cast a ray forward from the player's position
+            Ray ray = new Ray(transform.position, velocity.normalized);
             Vector3 rayDirection = new Vector3(transform.forward.x, transform.forward.y, 0);
-
-            // Set the length of the ray to be slightly longer than the width of the player character's collider
-            float rayLength = GetComponent<Collider>().bounds.extents.x + 1f;
-
-            // Draw the ray in the Scene view for debugging purposes
-            Debug.DrawRay(rayOrigin, rayDirection * rayLength, Color.blue, 1f);
-
-            // Perform the raycast and store the result in a RaycastHit variable
+            float rayLength = GetComponent<Collider>().bounds.extents.x + 1.5f;
             RaycastHit hit;
-            if (Physics.Raycast(rayOrigin, rayDirection, out hit, rayLength) && hit.collider.gameObject.tag == "Mantle")
+            // check if the ray hits an object
+            if (Physics.Raycast(ray, out hit, rayLength))
             {
-                return true;
+                if (hit.collider.tag == mantleTag)
+                {
+                    Debug.Log(transform.position.y);
+                    // check if the upper half of the player is higher than the object, excluding the z axis
+                    if (1 + height.position.y > hit.point.y)
+                    {
+                        // player should mantle
+                        
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                
             }
+
             return false;
+        }
+
+        IEnumerator MantleHopCoroutine()
+        {
+            // apply upward force to make the player hop
+            GetComponent<Rigidbody>().AddForce(Vector3.up * mantleHopForce, ForceMode.Impulse);
+
+            // wait for the hop duration
+            yield return new WaitForSeconds(mantleHopDuration);
+
+            // apply downward force to bring the player back down
+            GetComponent<Rigidbody>().AddForce(Vector3.down * mantleHopForce, ForceMode.Impulse);
         }
     #endregion
 
@@ -351,6 +392,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (hit.collider.tag == grappleTag)
                 {
+                    lineRenderer.enabled = true;
                     float distance = Vector3.Distance(transform.position, hit.transform.position);
                     if (distance < minDistance)
                     {
@@ -376,6 +418,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     #endregion
+
     public void OnEnable()
     {
         playerInput.Enable();
