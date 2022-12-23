@@ -5,12 +5,12 @@ using UnityEngine;
 [System.Serializable]
 public class GameData : MonoBehaviour
 {
-    int levelNumber;
+    public int currentLevelIndex;
 
     //initial data values to start game
     public GameData()
         {
-        this.levelNumber = 1;
+        this.currentLevelIndex = 0;
         }
 
 }
