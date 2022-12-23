@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7015008396011136394}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50,7 +50,7 @@ GameObject:
   - component: {fileID: 2063654682890721977}
   m_Layer: 0
   m_Name: PlayerBody
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -255,8 +255,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerState: 0
   rb: {fileID: 4747644829163784048}
+  height: {fileID: 5250853380272367026}
   lineRenderer: {fileID: 2063654682890721977}
-  anim: {fileID: 0}
+  anim: {fileID: 5605018536897311895}
   horizontalInput: 0
   jumpHeight: 30
   movementSpeed: 7
@@ -265,17 +266,22 @@ MonoBehaviour:
   momentum: 1
   canJump: 1
   canRun: 1
-  canCrouch: 1
+  canMantle: 0
   isJumping: 0
-  isCrouching: 0
   isRunning: 0
   isIdle: 0
   isWalking: 0
+  isMantling: 0
   isGrounded: 0
   isCollidingWithWall: 0
   isGrappling: 0
-  swingForce: 4
-  grapplePoint: {fileID: 0}
+  mantleHopForce: 4
+  mantleHopDuration: 1
+  mantleTag: Mantle
+  swingForce: 2
+  grapplePoints:
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!120 &2063654682890721977
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -491,5 +497,10 @@ PrefabInstance:
 --- !u!4 &1957142230070439661 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5783ad478a9da9141ae9f02204cf2c98, type: 3}
+  m_PrefabInstance: {fileID: 2063654683968194822}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &5605018536897311895 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 5783ad478a9da9141ae9f02204cf2c98, type: 3}
   m_PrefabInstance: {fileID: 2063654683968194822}
   m_PrefabAsset: {fileID: 0}
