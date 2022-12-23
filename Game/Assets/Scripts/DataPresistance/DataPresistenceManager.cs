@@ -16,6 +16,9 @@ public class DataPresistenceManager : MonoBehaviour
 
     private FileDataHandler dataHandler;
 
+    [SerializeField] private float timeToWait;
+    private float saveTimeLoop;
+
 
     
     private void Awake()
@@ -29,8 +32,19 @@ public class DataPresistenceManager : MonoBehaviour
 
     private void Start()
     {
+        saveTimeLoop = timeToWait;
         this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
-        this.dataPresistenceObjects = FindAllDataPresistenceObjects();       
+        this.dataPresistenceObjects = FindAllDataPresistenceObjects();
+        LoadGame();
+    }
+    private void Update()
+    {
+        if (Time.time > timeToWait)
+        {
+            Debug.Log("Time is working");
+            SaveGame();
+            timeToWait += saveTimeLoop;
+        }
     }
 
     public void NewGame()
@@ -40,8 +54,8 @@ public class DataPresistenceManager : MonoBehaviour
 
     public void LoadGame()
     {
-        // TODO - Load saved data
-
+        // Load saved data
+        this.gameData = dataHandler.Load();
 
         //if no saved data starting new
         if (this.gameData == null)
@@ -60,19 +74,24 @@ public class DataPresistenceManager : MonoBehaviour
 
     public void SaveGame()
     {
-        // Pass data to other scripts to update
+       
         foreach (IDataPresistence dataPresistenceObj in dataPresistenceObjects)
         {
-            dataPresistenceObj.LoadData(gameData);
+            dataPresistenceObj.SaveData(ref gameData);
         }
 
-        // TODO - save data to a file using data handler
+        dataHandler.Save(gameData);
 
     }
 
-    private void OnApplicationQuit()
+    private void ButtonSave()
     {
-        SaveGame();
+        if (Input.GetKeyDown(KeyCode.P))
+            {
+
+            SaveGame();
+            Debug.Log("Keycode working");
+            }
     }
 
     private List<IDataPresistence> FindAllDataPresistenceObjects()

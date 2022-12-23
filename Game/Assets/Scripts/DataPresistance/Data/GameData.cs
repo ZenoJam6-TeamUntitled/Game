@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class GameData : MonoBehaviour
+public class GameData
 {
     public int currentLevelIndex;
     public Vector3 playerPosition;
@@ -12,7 +12,7 @@ public class GameData : MonoBehaviour
     public GameData()
         {
         this.currentLevelIndex = 0;
-        this.playerPosition = Vector3.zero;
+        this.playerPosition = new Vector3 (-7,2,0);
         }
 
 }
