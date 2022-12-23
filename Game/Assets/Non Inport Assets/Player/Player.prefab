@@ -265,9 +265,7 @@ MonoBehaviour:
   momentum: 1
   canJump: 1
   canRun: 1
-  canCrouch: 1
   isJumping: 0
-  isCrouching: 0
   isRunning: 0
   isIdle: 0
   isWalking: 0
@@ -275,7 +273,7 @@ MonoBehaviour:
   isCollidingWithWall: 0
   isGrappling: 0
   swingForce: 4
-  grapplePoint: {fileID: 0}
+  grapplePoints: []
 --- !u!120 &2063654682890721977
 LineRenderer:
   m_ObjectHideFlags: 0
