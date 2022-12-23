@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.006912459, g: 0.008395733, b: 0.0103831785, a: 1}
+  m_IndirectSpecularColor: {r: 0.0069124782, g: 0.008395771, b: 0.010383206, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -123,9 +123,19 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &194908629 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5543143106909094255, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
+  m_PrefabInstance: {fileID: 2063654684418034662}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &400272293 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3731435727958154993, guid: ef9e35377377e0a4680d10aa72b51a69, type: 3}
+  m_PrefabInstance: {fileID: 1006764164}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &552192897 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4610343553348209563, guid: ef9e35377377e0a4680d10aa72b51a69, type: 3}
   m_PrefabInstance: {fileID: 1006764164}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &705507993
@@ -222,6 +232,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!198 &802393640 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 2077031828889298646, guid: ef9e35377377e0a4680d10aa72b51a69, type: 3}
+  m_PrefabInstance: {fileID: 1006764164}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -334,6 +349,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 153014350648353450, guid: ef9e35377377e0a4680d10aa72b51a69, type: 3}
+      propertyPath: GP1PS
+      value: 
+      objectReference: {fileID: 802393640}
+    - target: {fileID: 153014350648353450, guid: ef9e35377377e0a4680d10aa72b51a69, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 194908629}
     - target: {fileID: 1077587630750676138, guid: ef9e35377377e0a4680d10aa72b51a69, type: 3}
       propertyPath: m_TagString
       value: GrappleAOE
@@ -358,9 +381,25 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestWorld
       objectReference: {fileID: 0}
+    - target: {fileID: 2362759798620689365, guid: ef9e35377377e0a4680d10aa72b51a69, type: 3}
+      propertyPath: GP1PS
+      value: 
+      objectReference: {fileID: 1101721704}
+    - target: {fileID: 2362759798620689365, guid: ef9e35377377e0a4680d10aa72b51a69, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 194908629}
+    - target: {fileID: 2508510748088814375, guid: ef9e35377377e0a4680d10aa72b51a69, type: 3}
+      propertyPath: m_Constraints
+      value: 126
+      objectReference: {fileID: 0}
+    - target: {fileID: 2508510748088814375, guid: ef9e35377377e0a4680d10aa72b51a69, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2673564904990383820, guid: ef9e35377377e0a4680d10aa72b51a69, type: 3}
       propertyPath: m_TagString
-      value: GrappleHook
+      value: Grapple Point
       objectReference: {fileID: 0}
     - target: {fileID: 6317737691313420849, guid: ef9e35377377e0a4680d10aa72b51a69, type: 3}
       propertyPath: m_RootOrder
@@ -432,6 +471,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ef9e35377377e0a4680d10aa72b51a69, type: 3}
+--- !u!198 &1101721704 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 2912602553783191122, guid: ef9e35377377e0a4680d10aa72b51a69, type: 3}
+  m_PrefabInstance: {fileID: 1006764164}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2063654684418034662
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -440,11 +484,35 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1018458958381823530, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
+      propertyPath: swingForce
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018458958381823530, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
       propertyPath: grapplePoint
       value: 
       objectReference: {fileID: 400272293}
+    - target: {fileID: 1018458958381823530, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
+      propertyPath: grapplePoints.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018458958381823530, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
+      propertyPath: grapplePoints.Array.data[0]
+      value: 
+      objectReference: {fileID: 400272293}
+    - target: {fileID: 1018458958381823530, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
+      propertyPath: grapplePoints.Array.data[1]
+      value: 
+      objectReference: {fileID: 552192897}
     - target: {fileID: 2992953961138556094, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
       propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 2992953961138556094, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543143106909094255, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
+      propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 7015008396011136394, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
@@ -453,7 +521,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7015008396011136394, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -7.8
       objectReference: {fileID: 0}
     - target: {fileID: 7015008396011136394, guid: 6c6765c3bc8e30043afdff3e461e0945, type: 3}
       propertyPath: m_LocalPosition.y
