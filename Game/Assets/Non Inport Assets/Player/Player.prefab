@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 4747644829163784048}
   - component: {fileID: 8752601922044960788}
   - component: {fileID: 689506867547614666}
+  - component: {fileID: 324619115035499527}
   - component: {fileID: 1018458958381823530}
   - component: {fileID: 2063654682890721977}
   m_Layer: 0
@@ -241,6 +242,18 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &324619115035499527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5543143106909094255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c58606a564f546f6bfdbb297d39768f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1018458958381823530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,6 +268,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerState: 0
   rb: {fileID: 4747644829163784048}
+  height: {fileID: 0}
   lineRenderer: {fileID: 2063654682890721977}
   anim: {fileID: 0}
   horizontalInput: 0
@@ -265,17 +279,20 @@ MonoBehaviour:
   momentum: 1
   canJump: 1
   canRun: 1
-  canCrouch: 1
+  canMantle: 0
   isJumping: 0
-  isCrouching: 0
   isRunning: 0
   isIdle: 0
   isWalking: 0
+  isMantling: 0
   isGrounded: 0
   isCollidingWithWall: 0
   isGrappling: 0
+  mantleHopForce: 0
+  mantleHopDuration: 0
+  mantleTag: 
   swingForce: 4
-  grapplePoint: {fileID: 0}
+  grapplePoints: []
 --- !u!120 &2063654682890721977
 LineRenderer:
   m_ObjectHideFlags: 0

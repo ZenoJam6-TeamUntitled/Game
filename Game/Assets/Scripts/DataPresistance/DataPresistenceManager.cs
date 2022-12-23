@@ -5,12 +5,16 @@ using System.Linq;
 
 public class DataPresistenceManager : MonoBehaviour
 {
+    [Header("File Storage Config")]
+    [SerializeField] private string fileName;
 
     public static DataPresistenceManager instance { get; private set; }
 
     private GameData gameData;
 
     private List<IDataPresistence> dataPresistenceObjects;
+
+    private FileDataHandler dataHandler;
 
 
     
@@ -25,6 +29,7 @@ public class DataPresistenceManager : MonoBehaviour
 
     private void Start()
     {
+        this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
         this.dataPresistenceObjects = FindAllDataPresistenceObjects();       
     }
 

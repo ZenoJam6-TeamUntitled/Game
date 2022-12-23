@@ -426,11 +426,13 @@ public class PlayerController : MonoBehaviour
     public void LoadData(GameData data)
     {
         this.currentLevelIndex = data.currentLevelIndex;
+        this.transform.position = data.playerPosition;
     }
 
     public void SaveData(ref GameData data)
     {
         data.currentLevelIndex = this.currentLevelIndex;
+        data.playerPosition = this.transform.position;
     }
 
     
