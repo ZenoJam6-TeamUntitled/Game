@@ -7,13 +7,12 @@ TagManager:
   - Platform
   - Wall
   - Grapple Point
-  - GrappleAOE
-  - GrappleHook
+  - Mantle
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Mantle
   - Water
   - UI
   - 
