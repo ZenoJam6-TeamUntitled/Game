@@ -363,6 +363,7 @@
 "Assets/Scripts/Controller Scripts/Player Scripts/PlayerController.cs"
 "Assets/Scripts/Controller Scripts/Player Scripts/PlayerInput.cs"
 "Assets/Scripts/View Scripts/Camera Scripts/CameraFollow.cs"
+"Assets/Scripts/View Scripts/Camera Scripts/Mouse.cs"
 "Assets/Voxel_Buildings/PostProcessing/Runtime/Attributes/GetSetAttribute.cs"
 "Assets/Voxel_Buildings/PostProcessing/Runtime/Attributes/MinAttribute.cs"
 "Assets/Voxel_Buildings/PostProcessing/Runtime/Attributes/TrackballAttribute.cs"

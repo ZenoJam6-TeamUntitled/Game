@@ -38,10 +38,8 @@ public class PlayerController : MonoBehaviour
     [Header("BoolChecks")]
     public bool canJump = true;
     public bool canRun = true;
-    public bool canCrouch = true;
 
     public float isJumping;
-    public float isCrouching;
     public float isRunning;
     public float isIdle;
     public float isWalking;
@@ -51,18 +49,14 @@ public class PlayerController : MonoBehaviour
     #endregion
     
     public float swingForce = 5;
-    public Transform grapplePoint;
+    public List<Transform> grapplePoints = new List<Transform>();
     
  
     public void Awake()
     {
         playerInput = new PlayerInput();
         rb = GetComponent<Rigidbody>(); 
-        // lineRend = GetComponent<LineRenderer>();
-        // springJnt = GetComponent<SpringJoint>();
         playerInput.Player.Enable();
-        // lineRend.enabled = false;
-        // springJnt.enableCollision = false;
         anim = GetComponentInChildren<Animator>();
     }
 
@@ -71,8 +65,8 @@ public class PlayerController : MonoBehaviour
         horizontalInput = playerInput.Player.Move.ReadValue<float>();
         isJumping = playerInput.Player.Jump.ReadValue<float>();
         isRunning = playerInput.Player.Run.ReadValue<float>();
-        isCrouching = playerInput.Player.Crouch.ReadValue<float>();
         isGrappling = playerInput.Player.Grapple.ReadValue<float>();
+        
         
     }
 
@@ -108,11 +102,6 @@ public class PlayerController : MonoBehaviour
                 anim.SetTrigger("Jump");
                 Jump();
                 break;
-            case PlayerStates.crouching:
-                // Perform crouching behavior
-                
-                Crouch();
-                break;
             case PlayerStates.grappling:
                 GrappleToPoint();
                 lineRenderer.enabled = true;
@@ -136,10 +125,6 @@ public class PlayerController : MonoBehaviour
                     {
                         playerState = PlayerStates.jumping;
                     }
-                    else if(Mathf.Abs(isCrouching) > 0.5f && playerState == PlayerStates.walking)
-                    {
-                        playerState = PlayerStates.crouching;
-                    }
                     else
                     {
                         playerState = PlayerStates.walking;
@@ -149,10 +134,7 @@ public class PlayerController : MonoBehaviour
             {
                 playerState = PlayerStates.jumping;
             }
-            else if(Mathf.Abs(isCrouching) > 0.5f) 
-            {
-                playerState = PlayerStates.crouching;
-            }
+
             else
             {
                 playerState = PlayerStates.idle;
@@ -172,11 +154,14 @@ public class PlayerController : MonoBehaviour
                     playerState = PlayerStates.walking;
                 }
             }
-            else if ((Vector3.Distance(transform.position, grapplePoint.position) < 15f && 
-            Mathf.Abs(isGrappling) > 0.5f) || (Vector3.Distance(transform.position, grapplePoint.position) < 15f && 
-            Mathf.Abs(isGrappling) > 0.5f && Mathf.Abs(horizontalInput) > 0.01f))
+            else if (Mathf.Abs(isGrappling) > 0.5f ||  Mathf.Abs(isGrappling) > 0.5f && Mathf.Abs(horizontalInput) > 0.01f)
             {
                 playerState = PlayerStates.grappling;
+                if (Mathf.Abs(isGrappling) < 0.5f)
+                {
+                    // Remove the first grapple point from the list
+                    grapplePoints.RemoveAt(0);
+                }
             }
             else
             {
@@ -223,25 +208,10 @@ public class PlayerController : MonoBehaviour
     #endregion
    
     #region Player Actions
-        public void Crouch()
-        {
-            // If the character is currently crouched, uncrouch them by setting their movement speed to the normal value
-            if (canCrouch)
-            {
-                movementSpeed = 8;
-                canCrouch = false;
-            }
-            // If the character is not currently crouched, crouch them by setting their movement speed to half the normal value
-            else
-            {
-                movementSpeed /= 2;
-                canCrouch = true;
-            }
-        }
 
         public void Run()
         {
-            if(canCrouch && canRun)
+            if(canRun)
             {
                 movementSpeed *= 1.5f;
                 canRun = false;
@@ -325,23 +295,85 @@ public class PlayerController : MonoBehaviour
             }
             return false;
         }
+
+        public bool CheckMantleCollision()
+        {
+            // Set the origin of the ray to the center of the player character's collider
+            Vector3 rayOrigin = transform.position;
+
+            // Set the direction of the ray to be forward
+            Vector3 rayDirection = new Vector3(transform.forward.x, transform.forward.y, 0);
+
+            // Set the length of the ray to be slightly longer than the width of the player character's collider
+            float rayLength = GetComponent<Collider>().bounds.extents.x + 1f;
+
+            // Draw the ray in the Scene view for debugging purposes
+            Debug.DrawRay(rayOrigin, rayDirection * rayLength, Color.blue, 1f);
+
+            // Perform the raycast and store the result in a RaycastHit variable
+            RaycastHit hit;
+            if (Physics.Raycast(rayOrigin, rayDirection, out hit, rayLength) && hit.collider.gameObject.tag == "Mantle")
+            {
+                return true;
+            }
+            return false;
+        }
     #endregion
 
 
     #region Grapple 
 
-        private void GrappleToPoint()
+        public void GrappleToPoint()
         {
+            // Set the tag of the objects that the player can grapple to
+            string grappleTag = "Grapple Point";
+
+            /// Set the maximum distance that the player can grapple to an object
+            float grappleRange = 10f;
+
+            // Set the radius of the sphere that will be cast
+            float sphereRadius = 10f;
+
+            // Set the direction in which the player will cast the sphere
+            Vector3 grappleDirection = transform.forward;
+
+            // Create a sphere that will be used to detect objects with the grappleTag
+            Vector3 sphereOrigin = transform.position;
+            RaycastHit[] hits;
+
+            // Perform a sphere cast and store the results in the hits array
+            hits = Physics.SphereCastAll(sphereOrigin, sphereRadius, grappleDirection, grappleRange);
+
+            // Find the closest grapple point
+            Transform closestGrapplePoint = null;
+            float minDistance = float.MaxValue;
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.collider.tag == grappleTag)
+                {
+                    float distance = Vector3.Distance(transform.position, hit.transform.position);
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        closestGrapplePoint = hit.transform;
+                    }
+                }
+            }
+
+            // If a grapple point was found
+            if (closestGrapplePoint != null)
+            {
+            Transform grapplePoint = closestGrapplePoint;
+
             // Calculate the direction from the player to the grapple point
-            Vector3 grappleDirection = grapplePoint.position - transform.position;
-            // Normalize the direction so that it has a length of 1
-            grappleDirection.Normalize();
-            // Apply the swing force to the player's rigidbody in the direction of the grapple point
-           
-            rb.AddForce(grappleDirection * swingForce, ForceMode.Impulse);
-            lineRenderer.SetPosition(0, transform.position);
-            lineRenderer.SetPosition(1, grapplePoint.position);
-            
+            grappleDirection = grapplePoint.position - transform.position;
+                // Normalize the direction so that it has a length of 1
+                grappleDirection.Normalize();
+                // Apply the swing force to the player's rigidbody in the direction of the grapple point
+                rb.AddForce(grappleDirection * swingForce, ForceMode.Impulse);
+                lineRenderer.SetPosition(0, transform.position);
+                lineRenderer.SetPosition(1, grapplePoint.position);
+            }
         }
     #endregion
     public void OnEnable()
