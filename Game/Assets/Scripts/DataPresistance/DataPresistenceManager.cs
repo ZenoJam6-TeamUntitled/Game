@@ -84,16 +84,6 @@ public class DataPresistenceManager : MonoBehaviour
 
     }
 
-    private void ButtonSave()
-    {
-        if (Input.GetKeyDown(KeyCode.P))
-            {
-
-            SaveGame();
-            Debug.Log("Keycode working");
-            }
-    }
-
     private List<IDataPresistence> FindAllDataPresistenceObjects()
     {
 
