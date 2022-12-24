@@ -48,6 +48,7 @@ GameObject:
   - component: {fileID: 689506867547614666}
   - component: {fileID: 1018458958381823530}
   - component: {fileID: 2063654682890721977}
+  - component: {fileID: 5940094279164044079}
   m_Layer: 0
   m_Name: PlayerBody
   m_TagString: Untagged
@@ -255,6 +256,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerState: 0
   rb: {fileID: 4747644829163784048}
+  height: {fileID: 0}
   lineRenderer: {fileID: 2063654682890721977}
   anim: {fileID: 0}
   horizontalInput: 0
@@ -265,17 +267,17 @@ MonoBehaviour:
   momentum: 1
   canJump: 1
   canRun: 1
-  canCrouch: 1
+  canMantle: 0
   isJumping: 0
-  isCrouching: 0
   isRunning: 0
   isIdle: 0
   isWalking: 0
+  isMantling: 0
   isGrounded: 0
   isCollidingWithWall: 0
   isGrappling: 0
   swingForce: 4
-  grapplePoint: {fileID: 0}
+  grapplePoints: []
 --- !u!120 &2063654682890721977
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -375,6 +377,23 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!114 &5940094279164044079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5543143106909094255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 111ecc29131aa474ab2709168634afb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Mantle: {fileID: 1018458958381823530}
+  vaultLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  mantleCheck: 0
 --- !u!1001 &2063654683968194822
 PrefabInstance:
   m_ObjectHideFlags: 0

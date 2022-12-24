@@ -1,14 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GrappleNode : MonoBehaviour
 {
     public ParticleSystem GPPS;
-    public float radius = 10f;
     public string playerTag = "Player";
-    public bool nowEmitting = false; 
-
+    public Canvas GrapplePrompt;
     public GameObject player;
 
     private void Start()
@@ -17,20 +16,19 @@ public class GrappleNode : MonoBehaviour
          main.playOnAwake = false;
     }
 
-    private void Update()
+    void OnTriggerEnter(Collider thingEnter)
     {
-
-        RaycastHit hit;
-        bool hitPlayer = Physics.SphereCast(transform.position, radius, player.transform.position - transform.position, 
-        out hit, Mathf.Infinity);
-        if (hitPlayer && hit.collider.tag == playerTag)
-        {
-            GPPS.Play();
-        }
-        else
-        {
-            GPPS.Stop();
-        }
+            if(thingEnter.gameObject.tag == "Player")
+            {
+                GPPS.Play();
+            }
+    }
+    void OnTriggerExit(Collider thingExit)
+    {
+            if(thingExit.gameObject.tag == "Player")
+            {
+                GPPS.Stop();
+            }
     }
 }
 
