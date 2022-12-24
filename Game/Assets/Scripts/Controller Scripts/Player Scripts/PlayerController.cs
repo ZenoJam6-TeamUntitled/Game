@@ -1,8 +1,6 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour  
 {   
@@ -87,12 +85,14 @@ public class PlayerController : MonoBehaviour
                 // Perform idle behavior              
                     anim.SetBool("Walk", false);
                     anim.SetBool("Run", false);
+                anim.SetBool("Swinging", false);
                 break;
             case PlayerStates.walking:
                 // Perform walking behavior
                 if (isRunning < 0.5f) {
                     anim.SetBool("Walk", true);
                     anim.SetBool("Run", false);
+                    anim.SetBool("Swinging", false);
                 }
                 Move();
                 break;
@@ -100,6 +100,7 @@ public class PlayerController : MonoBehaviour
                 // Perform running behavior
                 anim.SetBool("Walk", false);
                 anim.SetBool("Run", true);
+                anim.SetBool("Swinging", false);
                 Run();
                 break;
             case PlayerStates.jumping:
@@ -108,6 +109,7 @@ public class PlayerController : MonoBehaviour
                 Jump();
                 break;
             case PlayerStates.grappling:
+                anim.SetBool("Swinging",true);
                 GrappleToPoint();
                 break;
         }
@@ -165,6 +167,7 @@ public class PlayerController : MonoBehaviour
                 {
                     // Remove the first grapple point from the list
                     grapplePoints.RemoveAt(0);
+                    
                 }
             }
             else
@@ -265,7 +268,7 @@ public class PlayerController : MonoBehaviour
             float rayLength = GetComponent<Collider>().bounds.extents.y + 1f;
 
             // Draw the ray in the Scene view for debugging purposes
-            //Debug.DrawRay(transform.position, rayDirectionDOWN * rayLength, Color.green, 1f);
+            Debug.DrawRay(transform.position, rayDirectionDOWN * rayLength, Color.green, 1f);
 
             // Perform the raycast and store the result in a RaycastHit variable
             RaycastHit hit;
