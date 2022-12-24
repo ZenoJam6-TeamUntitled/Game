@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{75dd7345-952d-4003-ae51-ae9f6f0b6448}">
+		<property name="assetPath">
+			<value>Music/Growing_Up_1st_song_rework.ogg</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>161.75020408163266</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{285d6387-3c3c-4871-808c-5d3a404bde48}</destination>
+		</relationship>
+	</object>
+</objects>

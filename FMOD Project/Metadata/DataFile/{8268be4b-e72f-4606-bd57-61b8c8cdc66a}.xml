@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="DataFile" id="{8268be4b-e72f-4606-bd57-61b8c8cdc66a}">
+		<property name="assetPath">
+			<value>Music/TheForgotten - 95bpm - Anthony Melograno.ogg</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{285d6387-3c3c-4871-808c-5d3a404bde48}</destination>
+		</relationship>
+	</object>
+</objects>

@@ -20,7 +20,7 @@ MonoBehaviour:
     height: 989
   m_ShowMode: 4
   m_Title: Game
-  m_RootView: {fileID: 2}
+  m_RootView: {fileID: 3}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
   m_Maximized: 1
@@ -835,7 +835,7 @@ MonoBehaviour:
     m_SkipHidden: 1
     m_SearchArea: 1
     m_Folders:
-    - Assets/Visual Assets/Scene Construction Assets/Low Poly Chess
+    - Assets/Scripts/Controller Scripts/Object Scripts
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
