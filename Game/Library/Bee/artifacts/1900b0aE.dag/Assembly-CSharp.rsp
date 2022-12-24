@@ -360,6 +360,7 @@
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEditor.UI.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEngine.UI.ref.dll"
 "Assets/Scripts/Controller Scripts/Object Scripts/GrappleNode.cs"
+"Assets/Scripts/Controller Scripts/Player Scripts/LedgeGrabbing.cs"
 "Assets/Scripts/Controller Scripts/Player Scripts/PlayerController.cs"
 "Assets/Scripts/Controller Scripts/Player Scripts/PlayerInput.cs"
 "Assets/Scripts/View Scripts/Camera Scripts/CameraFollow.cs"

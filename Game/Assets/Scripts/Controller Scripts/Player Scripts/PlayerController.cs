@@ -51,11 +51,6 @@ public class PlayerController : MonoBehaviour
 
     #endregion
     
-    #region Mantle
-    public float mantleHopForce;
-    public float mantleHopDuration;
-    public string mantleTag;
-    #endregion
 
     public float swingForce = 5;
     public List<Transform> grapplePoints = new List<Transform>();
@@ -74,14 +69,12 @@ public class PlayerController : MonoBehaviour
         isJumping = playerInput.Player.Jump.ReadValue<float>();
         isRunning = playerInput.Player.Run.ReadValue<float>();
         isGrappling = playerInput.Player.Grapple.ReadValue<float>();
-        isMantling = playerInput.Player.Mantle.ReadValue<float>();
         
         
     }
 
     public void FixedUpdate()
     {
-        canMantle = CheckMantleCollision();
         isGrounded = CheckTopCollision();
         anim.SetBool("Grounded", isGrounded);
         isCollidingWithWall = CheckWallCollision();
@@ -118,9 +111,6 @@ public class PlayerController : MonoBehaviour
             case PlayerStates.grappling:
                 anim.SetBool("Swinging",true);
                 GrappleToPoint();
-                break;
-            case PlayerStates.mantle:
-                StartCoroutine(MantleHopCoroutine());
                 break;
         }
     }
@@ -183,13 +173,6 @@ public class PlayerController : MonoBehaviour
             else
             {
                 playerState = PlayerStates.idle;
-            }
-        }
-        if(canMantle)
-        {
-            if (Mathf.Abs(isMantling) > 0.5f)
-            {
-                playerState = PlayerStates.mantle;
             }
         }
     }
@@ -319,49 +302,9 @@ public class PlayerController : MonoBehaviour
             return false;
         }
 
-        public bool CheckMantleCollision()
-        {
-            Vector3 velocity = GetComponent<Rigidbody>().velocity;
-            // cast a ray forward from the player's position
-            Ray ray = new Ray(transform.position, velocity.normalized);
-            Vector3 rayDirection = new Vector3(transform.forward.x, transform.forward.y, 0);
-            float rayLength = GetComponent<Collider>().bounds.extents.x + 1.5f;
-            RaycastHit hit;
-            // check if the ray hits an object
-            if (Physics.Raycast(ray, out hit, rayLength))
-            {
-                if (hit.collider.tag == mantleTag)
-                {
-                    // check if the upper half of the player is higher than the object, excluding the z axis
-                    if (1 + height.position.y > hit.point.y)
-                    {
-                    // player should mantle
-                    
-                        return true;
-                    }
-                    else
-                    {
-                    
-                    return false;
-                    }
-                }
-                
-            }
 
-            return false;
-        }
 
-        IEnumerator MantleHopCoroutine()
-        {
-            // apply upward force to make the player hop
-            GetComponent<Rigidbody>().AddForce(Vector3.up * mantleHopForce, ForceMode.Impulse);
 
-            // wait for the hop duration
-            yield return new WaitForSeconds(mantleHopDuration);
-
-            // apply downward force to bring the player back down
-            GetComponent<Rigidbody>().AddForce(Vector3.down * mantleHopForce, ForceMode.Impulse);
-        }
     #endregion
 
 
@@ -373,10 +316,10 @@ public class PlayerController : MonoBehaviour
             string grappleTag = "Grapple Point";
 
             /// Set the maximum distance that the player can grapple to an object
-            float grappleRange = 10f;
+            float grappleRange = 8f;
 
             // Set the radius of the sphere that will be cast
-            float sphereRadius = 10f;
+            float sphereRadius = 7f;
 
             // Set the direction in which the player will cast the sphere
             Vector3 grappleDirection = transform.forward;
