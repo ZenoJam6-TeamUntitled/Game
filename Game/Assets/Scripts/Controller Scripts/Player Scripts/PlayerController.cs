@@ -1,10 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 
-public class PlayerController : MonoBehaviour, IDataPresistence
+public class PlayerController : MonoBehaviour
 {   
 
     public enum PlayerStates{
@@ -365,30 +364,6 @@ public class PlayerController : MonoBehaviour, IDataPresistence
                 lineRenderer.SetPosition(1, grapplePoint.position);
             }
         }
-    #endregion
-
-    #region Save/Load
-
-    int currentLevelIndex;
-    public void LoadData(GameData data)
-    {
-        this.currentLevelIndex = data.currentLevelIndex;
-        this.transform.position = data.playerPosition;
-    }
-
-    public void SaveData(ref GameData data)
-    {
-        data.currentLevelIndex = this.currentLevelIndex;
-        data.playerPosition = this.transform.position;
-    }
-
-    
-    private void GetCurrentLevelIndex()
-        //Getting level index
-    {
-        currentLevelIndex = SceneManager.GetActiveScene().buildIndex;
-    }
-
     #endregion
 
     public void OnEnable()
