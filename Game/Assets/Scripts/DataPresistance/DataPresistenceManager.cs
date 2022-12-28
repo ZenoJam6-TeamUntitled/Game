@@ -5,9 +5,6 @@ using System.Linq;
 
 public class DataPresistenceManager : MonoBehaviour
 {
-    [Header("File Storage Config")]
-    [SerializeField] private string fileName;
-
     public static DataPresistenceManager instance { get; private set; }
 
     private GameData gameData;
@@ -16,11 +13,17 @@ public class DataPresistenceManager : MonoBehaviour
 
     private FileDataHandler dataHandler;
 
-    [SerializeField] private float timeToWait;
     private float saveTimeLoop;
+    //private bool checkpointActive = true; //variable for controlling checkpoint function work
+    [Header("File Storage Config")]
+
+    [SerializeField] private bool timeCheckpoints = true;
+    [SerializeField] private string fileName;
+    [SerializeField] private float timeToWait; //Time between checkpoints
 
 
-    
+
+
     private void Awake()
     {
         if (instance != null)
@@ -32,19 +35,15 @@ public class DataPresistenceManager : MonoBehaviour
 
     private void Start()
     {
-        saveTimeLoop = timeToWait;
+        CheckpointTimeHadler();
+
         this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
         this.dataPresistenceObjects = FindAllDataPresistenceObjects();
-        LoadGame();
+        LoadGame(); //can be removed 
     }
     private void Update()
     {
-        if (Time.time > timeToWait)
-        {
-            Debug.Log("Time is working");
-            SaveGame();
-            timeToWait += saveTimeLoop;
-        }
+        CheckpointSave();
     }
 
     public void NewGame()
@@ -52,12 +51,12 @@ public class DataPresistenceManager : MonoBehaviour
         this.gameData = new GameData();
     }
 
-    public void LoadGame()
+    public void LoadGame()  // TODO - rework, when IU done
     {
         // Load saved data
         this.gameData = dataHandler.Load();
 
-        //if no saved data starting new
+        // if no saved data starting new game
         if (this.gameData == null)
         {
             Debug.Log("No data has been found. Initialising defaults.");                
@@ -74,14 +73,36 @@ public class DataPresistenceManager : MonoBehaviour
 
     public void SaveGame()
     {
-       
-        foreach (IDataPresistence dataPresistenceObj in dataPresistenceObjects)
+            foreach (IDataPresistence dataPresistenceObj in dataPresistenceObjects)
+            {
+                dataPresistenceObj.SaveData(ref gameData);
+            }
+
+            dataHandler.Save(gameData);
+    }
+
+    private void CheckpointTimeHadler()
+    {
+        if (timeToWait < 10)
         {
-            dataPresistenceObj.SaveData(ref gameData);
+            timeCheckpoints = false;
         }
+        else
+        {
+            saveTimeLoop = timeToWait;
+        }
+    }
 
-        dataHandler.Save(gameData);
-
+    public void CheckpointSave()
+    {
+        if (timeCheckpoints)
+        {
+            if (Time.time > saveTimeLoop)
+            {
+                SaveGame();
+                saveTimeLoop += timeToWait;
+            }
+        }
     }
 
     private List<IDataPresistence> FindAllDataPresistenceObjects()
