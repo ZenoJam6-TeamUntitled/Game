@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 4637083897867490072}
   - component: {fileID: 5181935550237821176}
   - component: {fileID: 6154229274829694059}
+  - component: {fileID: 7517811549029822662}
   m_Layer: 0
   m_Name: PlayerBody
   m_TagString: Player
@@ -243,9 +244,6 @@ MonoBehaviour:
   isGrounded: 0
   isCollidingWithWall: 0
   isGrappling: 0
-  mantleHopForce: 4
-  mantleHopDuration: 1
-  mantleTag: Mantle
   swingForce: 2
   grapplePoints:
   - {fileID: 0}
@@ -349,6 +347,18 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!114 &7517811549029822662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 371149642541678525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 346dc9e8adba64f5997d5676fc989c3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6936315482669478508
 GameObject:
   m_ObjectHideFlags: 0
